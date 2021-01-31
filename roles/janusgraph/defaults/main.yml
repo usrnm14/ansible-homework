@@ -1,0 +1,6 @@
+---
+# defaults file for janusgraph
+
+java_rpm_version: 1.8.0
+janusgraph_version: 0.5.3
+janusgraph_user: janusgraph

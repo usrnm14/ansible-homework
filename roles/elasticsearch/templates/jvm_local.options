@@ -1,0 +1,2 @@
+-Xms{{ es_java_options.xms }}
+-Xmx{{ es_java_options.xmx }}

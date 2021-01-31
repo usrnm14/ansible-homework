@@ -1,0 +1,52 @@
+---
+# tasks file for cassandra
+
+- name: install java
+  yum:
+    name: java-{{ java_rpm_version }}
+    state: present
+
+- name: import repo key
+  rpm_key:
+    state: present
+    key: https://downloads.apache.org/cassandra/KEYS
+
+- name: put cassandra.repo
+  copy:
+    src: files/cassandra.repo
+    dest: "/etc/yum.repos.d/"
+
+- name: install cassandra
+  yum:
+    name: cassandra-{{ cassandra_rpm_version }}
+    state: present
+    enablerepo: cassandra
+
+- name: put custom cassandra.yaml
+  template:
+    src: templates/cassandra.yaml
+    dest: "/etc/cassandra/conf/"
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - restart cassandra
+
+- name: put selinux in permissive mode
+  selinux:
+    policy: targeted
+    state: permissive
+
+- name: permit 9042/tcp on firewalld
+  firewalld:
+    port: 9042/tcp
+    permanent: yes
+    state: enabled
+  notify:
+    - reload firewalld
+
+- name: enable cassandra.service
+  systemd:
+    name: cassandra
+    enabled: yes
+    state: started

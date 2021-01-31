@@ -1,0 +1,8 @@
+---
+# defaults file for cassandra
+
+java_rpm_version: 1.8.0
+cassandra_rpm_version: 3.11.9-1
+cassandra_yaml:
+  rpc_address: 0.0.0.0
+  broadcast_rpc_address: localhost

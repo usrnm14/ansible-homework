@@ -1,0 +1,14 @@
+---
+# handlers file for elasticsearch
+
+- name: restart elasticsearch
+  systemd:
+    name: elasticsearch
+    state: restarted
+
+- name: reload firewalld
+  command: /usr/bin/firewall-cmd --reload
+
+- name: reload systemd
+  systemd:
+    daemon_reload: yes

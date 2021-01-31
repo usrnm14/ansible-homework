@@ -1,0 +1,70 @@
+---
+# tasks file for elasticsearch
+
+- name: import repo key
+  rpm_key:
+    state: present
+    key: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+- name: put elasticsearch.repo
+  copy:
+    src: files/elasticsearch.repo
+    dest: "/etc/yum.repos.d/"
+
+- name: install elasticsearch
+  yum:
+    name: elasticsearch-{{ es_rpm_version }}
+    state: present
+    enablerepo: elasticsearch
+
+- name: put elasticsearch.service drop-in
+  template:
+    src: templates/startup-timeout.conf
+    dest: "/etc/systemd/system/elasticsearch.service.d/"
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - reload systemd
+
+- name: force handlers
+  meta: flush_handlers
+
+- name: put custom elasticsearch.yml
+  template:
+    src: templates/elasticsearch.yml
+    dest: "/etc/elasticsearch/"
+    owner: root
+    group: elasticsearch
+    mode: '0660'
+  notify:
+    - restart elasticsearch
+
+- name: put custom jvm.options
+  template:
+    src: templates/jvm_local.options
+    dest: "/etc/elasticsearch/jvm.options.d/"
+    owner: root
+    group: elasticsearch
+    mode: '0660'
+  notify:
+    - restart elasticsearch
+
+- name: put selinux in permissive mode
+  selinux:
+    policy: targeted
+    state: permissive
+
+- name: permit 9200/tcp on firewalld
+  firewalld:
+    port: 9200/tcp
+    permanent: yes
+    state: enabled
+  notify:
+    - reload firewalld
+
+- name: enable elasticsearch.service
+  systemd:
+    name: elasticsearch
+    enabled: yes
+    state: started

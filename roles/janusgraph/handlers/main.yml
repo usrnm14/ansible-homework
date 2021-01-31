@@ -1,0 +1,11 @@
+---
+# handlers file for janusgraph
+
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: restart janusgraph
+  systemd:
+    name: janusgraph
+    state: restarted

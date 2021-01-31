@@ -1,0 +1,37 @@
+- hosts: cassandra
+  roles:
+    - cassandra
+  vars:
+    java_rpm_version: 1.8.0
+    cassandra_rpm_version: 3.11.9-1
+    cassandra_yaml:
+      rpc_address: 0.0.0.0
+      broadcast_rpc_address: localhost
+  tags:
+    - cassandra
+
+- hosts: elasticsearch
+  roles:
+    - elasticsearch
+  vars:
+    es_rpm_version: 7.10.2-1
+    es_yml:
+      network_host: 0.0.0.0
+      discovery_type: single-node
+    es_java_options:
+      xms: 768m
+      xmx: 768m
+    es_systemd_service:
+      startup_timeout: 150
+  tags:
+    - elasticsearch
+
+- hosts: janusgraph
+  roles:
+    - janusgraph
+  vars:
+    java_rpm_version: 1.8.0
+    janusgraph_version: 0.5.3
+    janusgraph_user: janusgraph
+  tags:
+    - janusgraph

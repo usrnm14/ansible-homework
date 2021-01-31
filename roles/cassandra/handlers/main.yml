@@ -1,0 +1,10 @@
+---
+# handlers file for cassandra
+
+- name: reload firewalld
+  command: /usr/bin/firewall-cmd --reload
+
+- name: restart cassandra
+  systemd:
+    name: cassandra
+    state: restarted
